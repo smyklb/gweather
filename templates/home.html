@@ -2,6 +2,55 @@
 
 {% block content %}
 
+<div class="card" style="width: 50%;">
+  <div class="card-body">
+       <div class="row">
+            <div class="col">
+              Current Weather
+            </div>
+            <div class="col">
+              Weather, DT
+                {{ weather_list[0] }}
+            </div>
+       </div>
+       <div class="row">
+            <div class="col">
+              <ul class="nav nav-underline">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Temperature</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Precipitation</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">Wind</a>
+                  </li>
+                </ul>
+            </div>
+       </div>
+       <div class="row">
+            <div class="col">
+              <img src="static/02n@2x.png">
+            </div>
+           <div class="col">
+              <img src="static/03d@2x.png">
+            </div>
+           <div class="col">
+              <img src="static/50d@2x.png">
+            </div>
+           <div class="col">
+              <img src="static/01n@2x.png">
+            </div>
+           <div class="col">
+              <img src="static/09d@2x.png">
+            </div>
+           <div class="col">
+              <img src="static/11n@2x.png">
+            </div>
+       </div>
+  </div>
+</div>
 
 
-{% endblock %}
+
+    {% endblock %}
