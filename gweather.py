@@ -1,10 +1,11 @@
 import requests
 from flask import Flask, render_template, request
-from datetime import datetime
 from datetime import datetime as date
+import datetime as datetime
 from matplotlib import pyplot as plt
 
 app = Flask(__name__)
+
 
 #
 @app.route('/')
@@ -21,12 +22,23 @@ def index():
     main_w = cw.get("temp")
     temp_c = round(main_w - 273.15)
     print(temp_c)
+    c_list = [temp_c]
 
-    # date time as name
-    dt = response.get("list")[0]
+    # date time as day name
+    dt = int(response.get("list")[0].get("dt"))
 
-    g_list = [temp_c]
-    return render_template('home.html', weather_list=g_list)
+    date_time = datetime.datetime.fromtimestamp(dt)
+
+    dt_form = (date_time.strftime('%A'))
+    print(dt_form)
+
+    # current hour
+    now = date.now()
+
+    current_time = now.strftime("%H:%M")
+    dtn_list = [dt_form, current_time]
+
+    return render_template('home.html',  current_list=dtn_list, weather_list=c_list)
 
 
 @app.route('/results', methods=("GET", "POST"))
@@ -70,9 +82,9 @@ def results():
 if __name__ == '__main__':
     app.run(debug=True)
 
-# current weather
-#   temp in f and c, precipitation, humidity, wind speed, date time, description
+    # current weather
+    #   temp in f and c, precipitation, humidity, wind speed, date time, description
 
-# graphs
-#   3 graphs: temp time series, precipitation time series and wind speed
+    # graphs
+    #   3 graphs: temp time series, precipitation time series and wind speed
     app.run(debug=True)
