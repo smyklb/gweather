@@ -2,6 +2,7 @@ import datetime
 import requests
 from flask import Flask, render_template, request
 from datetime import datetime
+from datetime import datetime as date
 from matplotlib import pyplot as plt
 
 app = Flask(__name__)
@@ -15,10 +16,15 @@ def index():
     url = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&APPID=" + api_key
     # print(url)
     response = requests.get(url).json()
-    dt = response.get("list")[1].get("main")
-    main_w = dt.get("temp")
+
+    # current weather
+    cw = response.get("list")[1].get("main")
+    main_w = cw.get("temp")
     temp_c = round(main_w - 273.15)
     print(temp_c)
+
+    # date time as name
+    dt = response.get("list")[0]
 
     g_list = [temp_c]
     return render_template('home.html', weather_list=g_list)
