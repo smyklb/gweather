@@ -7,7 +7,6 @@ from matplotlib import pyplot as plt
 app = Flask(__name__)
 
 
-#
 @app.route('/')
 def index():
     api_key = "03813016975d1bf4e5573449445caef7"
@@ -24,6 +23,11 @@ def index():
     print(temp_c)
     c_list = [temp_c]
 
+    # weather description
+    weather_d = (response.get("list")[2].get("weather")[0].get("description"))
+    weather_dc = weather_d.capitalize()
+    print(weather_dc)
+
     # date time as day name
     dt = int(response.get("list")[0].get("dt"))
 
@@ -36,47 +40,9 @@ def index():
     now = date.now()
 
     current_time = now.strftime("%H:%M")
-    dtn_list = [dt_form, current_time]
+    dtn_list = [dt_form, current_time, weather_dc]
 
-    return render_template('home.html',  current_list=dtn_list, weather_list=c_list)
-
-
-@app.route('/results', methods=("GET", "POST"))
-def results():
-    api_key = "03813016975d1bf4e5573449445caef7"
-    city = request.form.get('city')
-    url = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + api_key
-    print(url)
-    response = requests.get(url).json()
-    print(response)
-    location = response.get("name")
-    timezone = response.get("timezone")
-    timestamp = response.get("dt")
-    dt = datetime.fromtimestamp(timestamp)
-    print(dt)
-    timestamp_local = ""
-    description = response.get("weather[0].description")
-    temp_k = response.get("main").get("temp")
-    temp_c = temp_k - 273.15
-    wind_speed = response.get("wind").get("speed")
-    icon = response.get("weather")[0].get("icon")
-    my_list = [location, timezone, timestamp, timestamp_local, description, temp_k, temp_c, wind_speed, icon]
-    my_dict = {
-        "location": {"lat": 0, "long": 0},
-        "timestamp": timestamp,
-        "timezone": timezone,
-        "dt": dt,
-        "description": description,
-        "temp_c": temp_c,
-        "wind_speed": wind_speed,
-        "icon": icon
-    }
-    print(my_dict)
-    print(my_dict["timestamp"])
-    print(my_dict["location"]["lat"])
-
-    return render_template('results.html', weather_list=my_list, weather_dict=my_dict)
-    return render_template('home.html')
+    return render_template('home.html', current_list=dtn_list, weather_list=c_list)
 
 
 if __name__ == '__main__':
@@ -87,4 +53,3 @@ if __name__ == '__main__':
 
     # graphs
     #   3 graphs: temp time series, precipitation time series and wind speed
-    app.run(debug=True)
