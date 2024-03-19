@@ -23,26 +23,37 @@ def index():
     print(temp_c)
     c_list = [temp_c]
 
-    # weather description
+    # current weather description
     weather_d = (response.get("list")[2].get("weather")[0].get("description"))
     weather_dc = weather_d.capitalize()
     print(weather_dc)
 
-    # date time as day name
+    # current date time as day name
     dt = int(response.get("list")[0].get("dt"))
 
     date_time = datetime.datetime.fromtimestamp(dt)
 
     dt_form = (date_time.strftime('%A'))
     print(dt_form)
+    dt_3 = dt_form[0:3]
 
     # current hour
     now = date.now()
 
     current_time = now.strftime("%H:%M")
-    dtn_list = [dt_form, current_time, weather_dc]
+    cdtn_list = [dt_form, current_time, weather_dc]
 
-    return render_template('home.html', current_list=dtn_list, weather_list=c_list)
+    # day 1 (current day)
+    temp_m = response.get("list")[0].get("main").get("temp_min")
+    temp_mi = (round(temp_m - 273.15))
+    temp_ma = response.get("list")[0].get("main").get("temp_max")
+    temp_max = (round(temp_ma - 273.15))
+    day_1 = [dt_3, temp_mi, temp_max]
+
+    # day 1 icon
+    icon = response.get("list")[2].get("weather")[0].get("icon")
+
+    return render_template('home.html', current_list=cdtn_list, weather_list=c_list, day_1=day_1)
 
 
 if __name__ == '__main__':
