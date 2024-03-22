@@ -7,6 +7,7 @@
        <div class="row">
             <div class="col">
               <h1>
+                  <img src="./static/{{ day_1[1] }}">
                   {{ weather_list[0] }}
                   °C
               </h1>
@@ -44,16 +45,23 @@
                     {{ day_1[0] }}
 
                 </h3>
-              <img src="static/02n@2x.png">
+              <img src="./static/{{ day_1[1] }}">
                 <p>
-                    {{ day_1[1] }}
-                    °C /
                     {{ day_1[2] }}
+                    °C /
+                    {{ day_1[3] }}
                     °C
                 </p>
             </div>
            <div class="col">
-              <img src="static/03d@2x.png">
+              <img src="./static/{{ day_2[1] }}">
+              <p>
+                  {{ day_2[2] }}
+                    °C /
+                    {{ day_2[3] }}
+                    °C
+              </p>
+
             </div>
            <div class="col">
               <img src="static/50d@2x.png">
