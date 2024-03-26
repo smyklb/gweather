@@ -133,19 +133,81 @@ def index():
     dt_form2 = datetime.strptime(date_time2, '%Y-%m-%d')
     dt_2 = dt_form2.strftime('%A')
     dt_d2 = dt_2[0:3]
-    print(dt_d2)
 
     # day 2 weather
     day2_min = round(min_temps[1] - 273.15)
     day2_max = round(max_temps[1] - 273.15)
 
     # day 2 icon
-    icon2 = icons[0]
-    icon_2 = icon1 + "@2x.png"
+    icon2 = icons[1]
+    icon_2 = icon2 + "@2x.png"
 
     day_2 = [dt_d2, icon_2, day2_min, day2_max]
 
-    return render_template('home.html', current_list=cdtn_list, weather_list=c_list, day_1=day_1, day_2=day_2)
+    # day 3 name
+    date_time3 = (dates[2])
+    dt_form3 = datetime.strptime(date_time3, '%Y-%m-%d')
+    dt_3 = dt_form3.strftime('%A')
+    dt_d3 = dt_3[0:3]
+
+    # day 3 weather
+    day3_min = round(min_temps[2] - 273.15)
+    day3_max = round(max_temps[2] - 273.15)
+
+    # day 3 icon
+    icon3 = icons[2]
+    icon_3 = icon3 + "@2x.png"
+
+    day_3 = [dt_d3, icon_3, day3_min, day3_max]
+
+    # day 4 name
+    date_time4 = (dates[3])
+    dt_form4 = datetime.strptime(date_time4, '%Y-%m-%d')
+    dt_4 = dt_form4.strftime('%A')
+    dt_d4 = dt_4[0:3]
+
+    # day 4 weather
+    day4_min = round(min_temps[3] - 273.15)
+    day4_max = round(max_temps[3] - 273.15)
+
+    # day 4 icon
+    icon4 = icons[3]
+    icon_4 = icon4 + "@2x.png"
+
+    day_4 = [dt_d4, icon_4, day4_min, day4_max]
+
+    # day 5 name
+    date_time5 = (dates[4])
+    dt_form5 = datetime.strptime(date_time5, '%Y-%m-%d')
+    dt_5 = dt_form5.strftime('%A')
+    dt_d5 = dt_5[0:3]
+
+    # day 5 weather
+    day5_min = round(min_temps[4] - 273.15)
+    day5_max = round(max_temps [4] - 273.15)
+
+    # day 5 icon
+    icon5 = icons[4]
+    icon_5 = icon5 + "@2x.png"
+
+    day_5 = [dt_d5, icon_5, day5_min, day5_max]
+
+    # day 6 name
+    date_time6 = (dates[5])
+    dt_form6 = datetime.strptime(date_time6, '%Y-%m-%d')
+    dt_6 = dt_form6.strftime('%A')
+    dt_d6 = dt_6[0:3]
+
+    # day 6 weather
+    day6_min = round(min_temps[5] - 273.15)
+    day6_max = round(max_temps[5] - 273.15)
+
+    # day 6 icon
+    icon6 = icons[5]
+    icon_6 = icon6 + "@2x.png"
+
+    day_6 = [dt_d6, icon_6, day6_min, day6_max]
+    return render_template('home.html', current_list=cdtn_list, weather_list=c_list, day_1=day_1, day_2=day_2, day_3=day_3, day_4=day_4, day_5=day_5, day_6=day_6)
 
 
 if __name__ == '__main__':
