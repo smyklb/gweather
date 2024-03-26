@@ -36,7 +36,8 @@ def index():
     dt_3 = dt_form2[0:3]
 
     # current time
-    time_now = datetime.now().hour, datetime.now().minute
+    time_now1 = datetime.now().hour, datetime.now().minute
+    time_now = (str(datetime.now().hour) + ":" + str(datetime.now().minute))
     print(time_now)
     cdtn_list = [dt_form2, time_now, weather_dc]
 
