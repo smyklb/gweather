@@ -5,6 +5,8 @@
 <div class="card" style="width: 50%;">
   <div class="card-body">
        <div class="row">
+
+
             <div class="col">
               <h1>
                   <img src="./static/{{ day_1[1] }}">
@@ -27,13 +29,13 @@
             <div class="col">
               <ul class="nav nav-underline">
                   <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Temperature</a>
+                       <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Temperature</button>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">Precipitation</a>
+                    <button class="nav-link" id="precipitation-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Precipitation</button>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">Wind</a>
+                    <button class="nav-link" id="wind-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Wind</button>
                   </li>
                 </ul>
             </div>
@@ -104,21 +106,11 @@
                     °C
                </p>
             </div>
-           <div class="col">
-               <h3>
-                   {{ day_6[0] }}
-               </h3>
-              <img src="./static/{{ day_6[1] }}">
-               <p>
-                   {{ day_6[2] }}
-                   °C /
-                    {{ day_6[3] }}
-                    °C
-               </p>
-            </div>
+
        </div>
   </div>
 </div>
+
 
 
 

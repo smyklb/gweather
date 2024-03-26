@@ -38,53 +38,53 @@ def index():
     # current time
     time_now1 = datetime.now().hour, datetime.now().minute
     time_now = (str(datetime.now().hour) + ":" + str(datetime.now().minute))
-    print(time_now)
     cdtn_list = [dt_form2, time_now, weather_dc]
 
     # get 5 day highs and lows
     def get_daily_low_high_forecast(api_key, city_name):
-        url = "https://api.openweathermap.org/data/2.5/forecast"
-        params = {
-            "q": city_name,
-            "APPID": api_key,
-        }
-
         # Make the API request
-        response = requests.get(url, params=params)
+        response = requests.get(url)
 
-        # Check if the request was successful (status code 200)
-        if response.ok:
+        # Check if the request was successful
+        if response.status_code == 200:
             data = response.json()
             dates = []
             min_temps = []
             max_temps = []
+
+            # Initialize a dictionary to store temperatures for each date
+            temp_dict = {}
 
             for forecast in data["list"]:
                 # Extract date and temperature data
                 date = forecast["dt_txt"].split(" ")[0]
                 temperature = forecast["main"]["temp"]
 
-                # Check if the date exists in the lists
-                if date not in dates:
-                    dates.append(date)
-                    min_temps.append(temperature)
-                    max_temps.append(temperature)
+                # Add temperature to temp_dict for the corresponding date
+                if date not in temp_dict:
+                    temp_dict[date] = [temperature]
                 else:
-                    # Update min and max temperature if necessary
-                    index = dates.index(date)
-                    if temperature < min_temps[index]:
-                        min_temps[index] = temperature
-                    elif temperature > max_temps[index]:
-                        max_temps[index] = temperature
+                    temp_dict[date].append(temperature)
+
+            # Calculate min and max temperatures for each date
+            for date, temps in temp_dict.items():
+                dates.append(date)
+                min_temps.append(min(temps))
+                max_temps.append(max(temps))
 
             return dates, min_temps, max_temps
         else:
             print("Error:", response.status_code)
             return None, None, None
 
+    # Example usage
+    api_key = 'YOUR_API_KEY'
+    city = 'YOUR_CITY_NAME'
+
     dates, min_temps, max_temps = get_daily_low_high_forecast(api_key, city)
     if dates and min_temps and max_temps:
-        print(max_temps, min_temps)
+        for date, min_temp, max_temp in zip(dates, min_temps, max_temps):
+            print(f"Date: {date}, Min Temp: {min_temp}, Max Temp: {max_temp}")
     else:
         print("Failed to fetch forecast data.")
 
@@ -92,7 +92,6 @@ def index():
     icons = []  # List to store the icon URLs
     previous_date = None  # Variable to store the previous date
 
-    # Check if the 'list' key exists in the response data
     if 'list' in response:
         # Parse JSON response
         data = response
@@ -184,7 +183,7 @@ def index():
 
     # day 5 weather
     day5_min = round(min_temps[4] - 273.15)
-    day5_max = round(max_temps [4] - 273.15)
+    day5_max = round(max_temps[4] - 273.15)
 
     # day 5 icon
     icon5 = icons[4]
@@ -193,17 +192,18 @@ def index():
     day_5 = [dt_d5, icon_5, day5_min, day5_max]
 
     # day 6 name
-    date_time6 = (dates[5])
+    print(dates)
+    date_time6 = dates[4]
     dt_form6 = datetime.strptime(date_time6, '%Y-%m-%d')
     dt_6 = dt_form6.strftime('%A')
     dt_d6 = dt_6[0:3]
 
     # day 6 weather
-    day6_min = round(min_temps[5] - 273.15)
-    day6_max = round(max_temps[5] - 273.15)
+    day6_min = round(min_temps[4] - 273.15)
+    day6_max = round(max_temps[4] - 273.15)
 
     # day 6 icon
-    icon6 = icons[5]
+    icon6 = icons[4]
     icon_6 = icon6 + "@2x.png"
 
     day_6 = [dt_d6, icon_6, day6_min, day6_max]
