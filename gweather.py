@@ -1,8 +1,10 @@
 import datetime
 from datetime import datetime
 
+import matplotlib.pyplot as plt
 import requests
 from flask import Flask, render_template
+# from matplotlib import pyplot as plt
 
 app = Flask(__name__)
 
@@ -13,14 +15,13 @@ def index():
     city = "adelaide"
     url = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&APPID=" + api_key
     url_c = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + api_key
-    print(url_c)
+    print(url)
     response = requests.get(url).json()
     response_2 = requests.get(url_c).json()
 
     # current weather
     cw = response_2.get("main").get("temp")
     cw_c = round(cw - 273.15)
-    print(cw_c)
     c_list = [cw_c]
 
     # current weather description
@@ -41,9 +42,16 @@ def index():
     cdtn_list = [dt_form2, time_now, weather_dc]
 
     # get 5 day highs and lows
-    def get_daily_low_high_forecast(api_key, city_name):
+
+    def get_daily_forecast(api_key, city):
+        url = "https://api.openweathermap.org/data/2.5/forecast"
+        params = {
+            "q": city,
+            "APPID": api_key,
+        }
+
         # Make the API request
-        response = requests.get(url)
+        response = requests.get(url, params=params)
 
         # Check if the request was successful
         if response.status_code == 200:
@@ -51,40 +59,42 @@ def index():
             dates = []
             min_temps = []
             max_temps = []
+            precips = []  # List to store daily precipitation
 
-            # Initialize a dictionary to store temperatures for each date
-            temp_dict = {}
+            # Initialize a dictionary to store temperatures and precipitation for each date
+            forecast_dict = {}
 
             for forecast in data["list"]:
-                # Extract date and temperature data
+                # Extract date, temperature, and precipitation data
                 date = forecast["dt_txt"].split(" ")[0]
                 temperature = forecast["main"]["temp"]
+                precipitation = forecast.get("rain", {}).get("3h", 0)  # Get precipitation, default to 0 if not present
 
-                # Add temperature to temp_dict for the corresponding date
-                if date not in temp_dict:
-                    temp_dict[date] = [temperature]
+                # Add temperature and precipitation to forecast_dict for the corresponding date
+                if date not in forecast_dict:
+                    forecast_dict[date] = {"temperatures": [temperature], "precipitations": [precipitation]}
                 else:
-                    temp_dict[date].append(temperature)
+                    forecast_dict[date]["temperatures"].append(temperature)
+                    forecast_dict[date]["precipitations"].append(precipitation)
 
-            # Calculate min and max temperatures for each date
-            for date, temps in temp_dict.items():
+            # Calculate min and max temperatures and daily precipitation for each date
+            for date, data in forecast_dict.items():
                 dates.append(date)
-                min_temps.append(min(temps))
-                max_temps.append(max(temps))
+                min_temps.append(min(data["temperatures"]))
+                max_temps.append(max(data["temperatures"]))
+                daily_precipitation = sum(data["precipitations"])  # Total precipitation for the day
+                precips.append(daily_precipitation)
 
-            return dates, min_temps, max_temps
+            return dates, min_temps, max_temps, precips
         else:
             print("Error:", response.status_code)
-            return None, None, None
+            return None, None, None, None
 
     # Example usage
-    api_key = 'YOUR_API_KEY'
-    city = 'YOUR_CITY_NAME'
-
-    dates, min_temps, max_temps = get_daily_low_high_forecast(api_key, city)
-    if dates and min_temps and max_temps:
-        for date, min_temp, max_temp in zip(dates, min_temps, max_temps):
-            print(f"Date: {date}, Min Temp: {min_temp}, Max Temp: {max_temp}")
+    dates, min_temps, max_temps, precips = get_daily_forecast(api_key, city)
+    if dates and min_temps and max_temps and precips:
+        for date, min_temp, max_temp, precip in zip(dates, min_temps, max_temps, precips):
+            print(f"Date: {date}, Min Temp: {min_temp}, Max Temp: {max_temp}, Precipitation: {precip}")
     else:
         print("Failed to fetch forecast data.")
 
@@ -191,23 +201,15 @@ def index():
 
     day_5 = [dt_d5, icon_5, day5_min, day5_max]
 
-    # day 6 name
-    print(dates)
-    date_time6 = dates[4]
-    dt_form6 = datetime.strptime(date_time6, '%Y-%m-%d')
-    dt_6 = dt_form6.strftime('%A')
-    dt_d6 = dt_6[0:3]
+    # weather graph
+    # y_temp = [day1_max, day2_max, day3_max, day4_max, day5_max]
+    # x_day = [dt_d, dt_d2, dt_d3, dt_d4, dt_d5]
+    # plt.plot(x_day, y_temp)
+    # plt.savefig("test_chart")
+    #
+    # print(max_temps)
 
-    # day 6 weather
-    day6_min = round(min_temps[4] - 273.15)
-    day6_max = round(max_temps[4] - 273.15)
-
-    # day 6 icon
-    icon6 = icons[4]
-    icon_6 = icon6 + "@2x.png"
-
-    day_6 = [dt_d6, icon_6, day6_min, day6_max]
-    return render_template('home.html', current_list=cdtn_list, weather_list=c_list, day_1=day_1, day_2=day_2, day_3=day_3, day_4=day_4, day_5=day_5, day_6=day_6)
+    return render_template('home.html', current_list=cdtn_list, weather_list=c_list, day_1=day_1, day_2=day_2, day_3=day_3, day_4=day_4, day_5=day_5)
 
 
 if __name__ == '__main__':

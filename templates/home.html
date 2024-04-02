@@ -25,23 +25,29 @@
                 </p>
             </div>
        </div>
+
        <div class="row">
             <div class="col">
               <ul class="nav nav-underline">
                   <li class="nav-item">
                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Temperature</button>
                   </li>
-                  <li class="nav-item">
-                    <button class="nav-link" id="precipitation-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Precipitation</button>
+                   <li class="nav-item">
+                       <button class="nav-link" id="precipitation-tab" data-bs-toggle="tab" data-bs-target="#precipitation-tab-pane" type="button" role="tab" aria-controls="precipitation-tab-pane" aria-selected="false">Precipitation</button>
                   </li>
-                  <li class="nav-item">
-                    <button class="nav-link" id="wind-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Wind</button>
+
+                   <li class="nav-item">
+                       <button class="nav-link" id="wind-tab" data-bs-toggle="tab" data-bs-target="#wind-tab-pane" type="button" role="tab" aria-controls="wind-tab-pane" aria-selected="false">Wind</button>
                   </li>
                 </ul>
             </div>
+            <div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0"><img src=""></div>
+  <div class="tab-pane fade" id="precipitation-tab-pane" role="tabpanel" aria-labelledby="precipitation-tab" tabindex="0">1111</div>
+  <div class="tab-pane fade" id="wind-tab-pane" role="tabpanel" aria-labelledby="wind-tab" tabindex="0">2222</div>
        </div>
 
-       <div class="row">
+      <div class="row">
             <div class="col">
                 <h3>
                     {{ day_1[0] }}
@@ -108,10 +114,9 @@
             </div>
 
        </div>
-  </div>
+
+</div>
 </div>
 
-
-
-
-    {% endblock %}
+   {% endblock %}
+</div>
