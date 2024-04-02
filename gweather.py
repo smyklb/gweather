@@ -1,10 +1,8 @@
 import datetime
 from datetime import datetime
-
-import matplotlib.pyplot as plt
 import requests
 from flask import Flask, render_template
-# from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 
 app = Flask(__name__)
 
@@ -35,6 +33,7 @@ def index():
 
     dt_form2 = (date_time.strftime('%A'))
     dt_3 = dt_form2[0:3]
+    print(dt_3)
 
     # current time
     time_now1 = datetime.now().hour, datetime.now().minute
@@ -43,10 +42,10 @@ def index():
 
     # get 5 day highs and lows
 
-    def get_daily_forecast(api_key, city):
+    def get_daily_forecast(api_key, city_name):
         url = "https://api.openweathermap.org/data/2.5/forecast"
         params = {
-            "q": city,
+            "q": city_name,
             "APPID": api_key,
         }
 
@@ -60,41 +59,58 @@ def index():
             min_temps = []
             max_temps = []
             precips = []  # List to store daily precipitation
+            wind_speeds = []  # List to store wind speeds
 
-            # Initialize a dictionary to store temperatures and precipitation for each date
+            # Initialize a dictionary to store temperatures, precipitation, and wind speed for each date
             forecast_dict = {}
 
+            # Get today's date
+            today = datetime.utcnow().date()
+
             for forecast in data["list"]:
-                # Extract date, temperature, and precipitation data
-                date = forecast["dt_txt"].split(" ")[0]
-                temperature = forecast["main"]["temp"]
-                precipitation = forecast.get("rain", {}).get("3h", 0)  # Get precipitation, default to 0 if not present
+                # Extract date, temperature, precipitation, and wind speed data
+                forecast_date = datetime.strptime(forecast["dt_txt"], "%Y-%m-%d %H:%M:%S").date()
 
-                # Add temperature and precipitation to forecast_dict for the corresponding date
-                if date not in forecast_dict:
-                    forecast_dict[date] = {"temperatures": [temperature], "precipitations": [precipitation]}
-                else:
-                    forecast_dict[date]["temperatures"].append(temperature)
-                    forecast_dict[date]["precipitations"].append(precipitation)
+                # Check if the forecast date is within the next 5 days
+                if forecast_date >= today and len(dates) < 5:
+                    date = forecast_date.strftime("%Y-%m-%d")
+                    temperature = forecast["main"]["temp"]
+                    precipitation = forecast.get("rain", {}).get("3h",
+                                                                 0)  # Get precipitation, default to 0 if not present
+                    wind_speed = forecast["wind"]["speed"]
 
-            # Calculate min and max temperatures and daily precipitation for each date
+                    # Add temperature, precipitation, and wind speed to forecast_dict for the corresponding date
+                    if date not in forecast_dict:
+                        forecast_dict[date] = {"temperatures": [temperature], "precipitations": [precipitation],
+                                               "wind_speeds": [wind_speed]}
+                    else:
+                        forecast_dict[date]["temperatures"].append(temperature)
+                        forecast_dict[date]["precipitations"].append(precipitation)
+                        forecast_dict[date]["wind_speeds"].append(wind_speed)
+
+            # Calculate min and max temperatures, daily precipitation, and average wind speed for each date
             for date, data in forecast_dict.items():
                 dates.append(date)
                 min_temps.append(min(data["temperatures"]))
                 max_temps.append(max(data["temperatures"]))
                 daily_precipitation = sum(data["precipitations"])  # Total precipitation for the day
                 precips.append(daily_precipitation)
+                average_wind_speed = sum(data["wind_speeds"]) / len(
+                    data["wind_speeds"])  # Average wind speed for the day
+                wind_speeds.append(average_wind_speed)
 
-            return dates, min_temps, max_temps, precips
+            return dates, min_temps, max_temps, precips, wind_speeds
         else:
             print("Error:", response.status_code)
-            return None, None, None, None
+            return None, None, None, None, None
 
     # Example usage
-    dates, min_temps, max_temps, precips = get_daily_forecast(api_key, city)
-    if dates and min_temps and max_temps and precips:
-        for date, min_temp, max_temp, precip in zip(dates, min_temps, max_temps, precips):
-            print(f"Date: {date}, Min Temp: {min_temp}, Max Temp: {max_temp}, Precipitation: {precip}")
+    dates, min_temps, max_temps, precips, wind_speeds = get_daily_forecast(api_key, city)
+    if dates and min_temps and max_temps and precips and wind_speeds:
+        for date, min_temp, max_temp, precip, wind_speed in zip(dates, min_temps, max_temps, precips, wind_speeds):
+            print(
+                f"Date: {date}, Min Temp: {min_temp}, Max Temp: {max_temp}, Precipitation: {precip}, Wind Speed: {wind_speed}")
+
     else:
         print("Failed to fetch forecast data.")
 
@@ -156,8 +172,8 @@ def index():
     # day 3 name
     date_time3 = (dates[2])
     dt_form3 = datetime.strptime(date_time3, '%Y-%m-%d')
-    dt_3 = dt_form3.strftime('%A')
-    dt_d3 = dt_3[0:3]
+    dt_t3 = dt_form3.strftime('%A')
+    dt_d3 = dt_t3[0:3]
 
     # day 3 weather
     day3_min = round(min_temps[2] - 273.15)
@@ -202,12 +218,23 @@ def index():
     day_5 = [dt_d5, icon_5, day5_min, day5_max]
 
     # weather graph
-    # y_temp = [day1_max, day2_max, day3_max, day4_max, day5_max]
-    # x_day = [dt_d, dt_d2, dt_d3, dt_d4, dt_d5]
-    # plt.plot(x_day, y_temp)
-    # plt.savefig("test_chart")
-    #
-    # print(max_temps)
+    y_temp = [day1_max, day2_max, day3_max, day4_max, day5_max]
+    x_day = [dt_3, dt_d2, dt_d3, dt_d4, dt_d5]
+    plt.figure().set_figwidth(16)
+    plt.plot(x_day, y_temp)
+    plt.savefig("static/weather_graph")
+
+    # precipitation graph
+    y_rain = precips[0:5]
+    plt.figure().set_figwidth(16)
+    plt.plot(x_day, y_rain)
+    plt.savefig("static/rain_graph")
+
+    # wind graph
+    y_wind = wind_speeds[0:5]
+    plt.figure().set_figwidth(16)
+    plt.plot(x_day, y_wind)
+    plt.savefig("static/wind_graph")
 
     return render_template('home.html', current_list=cdtn_list, weather_list=c_list, day_1=day_1, day_2=day_2, day_3=day_3, day_4=day_4, day_5=day_5)
 
